@@ -1,0 +1,22 @@
+{
+  "name": "ng-mr-developer",
+  "version": "0.0.0",
+  "description": "Utility for checking out git repos as dependencies in an Angular project.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/collective/ng-mr-developer.git"
+  },
+  "author": {
+      "name": "Charles Beebe",
+      "email": "charlescbeebe@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/collective/ng-mr-developer/issues"
+  },
+  "homepage": "https://github.com/collective/ng-mr-developer#readme"
+}
