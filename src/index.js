@@ -1,8 +1,7 @@
-'use strict';
+const fs = require('fs');
 
-exports.develop = function() {
-	const fs = require('fs');
-	let raw = fs.readFileSync('mr.developer.json');
-	let pkgs = JSON.parse(raw);
-	console.log(pkgs);
+exports.develop = function develop() {
+  const raw = fs.readFileSync('mr.developer.json');
+  const pkgs = JSON.parse(raw);
+  return pkgs;
 };
