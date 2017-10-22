@@ -1,2 +1,4 @@
 .envrc
 .nvmrc
+.jshintrc
+node_modules/
