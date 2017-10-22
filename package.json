@@ -1,7 +1,7 @@
 {
   "name": "ng-mr-developer",
   "version": "0.0.0",
-  "description": "Utility for checking out git repos as dependencies in an Angular project.",
+  "description": "Utility for installing Angular dependencies as git repos.",
   "main": "src/index.js",
   "engines": {
     "node": ">=5.12.0",
