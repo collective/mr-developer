@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "Utility for installing Angular dependencies as git repos.",
   "main": "src/index.js",
+  "bin": {
+    "mrdeveloper": "src/command.js"
+  },
   "engines": {
     "node": ">=5.12.0",
     "npm": ">=0.23.3"
