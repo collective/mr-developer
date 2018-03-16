@@ -2,3 +2,5 @@
 .nvmrc
 .jshintrc
 node_modules/
+src/develop
+mr.developer.json
