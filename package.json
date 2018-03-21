@@ -31,6 +31,6 @@
     "eslint-plugin-import": "^2.8.0",
     "mocha": "^4.0.1",
     "mock-fs": "^4.4.2",
-    "nodegit": "^0.20.3"
+    "nodegit": "~0.21.2"
   }
 }

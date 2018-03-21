@@ -13,8 +13,9 @@ const cloneRepository = function (name, path, url) {
       credentials: function(repoUrl, userName) {
         return git.Cred.sshKeyFromAgent(userName);
       },
-      transferProgress: function(info) {
-        return console.log(`Loading ${name}...`);
+      transferProgress: function(stats) {
+        const progress = Math.round(100 * stats.receivedObjects() / stats.totalObjects());
+        return console.log(`Loading ${name} ${progress}%...`);
       }
     }
   };
@@ -52,29 +53,35 @@ const createBranch = function (repository, branchname) {
 
 const updateRepository = function (name, repository, branchname) {
   var branch;
-  repository.fetchAll({
-    credentials: function(url, userName) {
-      return git.Cred.sshKeyFromAgent(userName);
+  console.log(`Updating ${name}`);
+  const fetchOpts = {
+    callbacks: {
+      certificateCheck: function() { return 1; },
+      credentials: function(repoUrl, userName) {
+        return git.Cred.sshKeyFromAgent(userName);
+      }
     }
-  }, true)
+  };
+  repository.fetch('origin', fetchOpts)
   .then(function() {
     return repository.getBranch(branchname)
     .then(function(reference) {
       branch = reference;
     })
     .catch(function() {
-      // branch does not exist yet, we have to create it first
+      // branch does not exist yet, we have to create it
       return createBranch(repository, branchname).then(function(b) {
         branch = b;
       });
     });
   })
   .then(function() {
-    return repository.mergeBranches(branchname, `origin/${branchname}`);
+    console.log(`...update ${name} ${branchname}`);
+    return repository.mergeBranches(branch, 'refs/remotes/origin/' + branchname)
+    .catch(function (err) { console.log(`Cannot merge origin/${branchname}`, err); });
   })
   .then(function() {
-    console.log(`...update ${name} ${branchname}`);
-    return repository.checkoutRef(branch);
+    repository.checkoutRef(branch);
   })
   .catch(function (err) { console.log(`Cannot update ${settings.url} origin/${branchname}`, err); });
 };
@@ -91,7 +98,7 @@ const checkoutRepository = function(name, root, settings) {
   }
 
   promise.then(function(repository) {
-    updateRepository(name, repository, branchname);
+    return updateRepository(name, repository, branchname);
   })
   .catch(function(err) { console.log(err); });
 };
