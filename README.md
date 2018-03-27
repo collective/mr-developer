@@ -12,8 +12,24 @@ Dependencies are listed in a file named `mr.developer.json`:
     "angular-traversal": {
         "url": "https://github.com/makinacorpus/angular-traversal",
         "branch": "staging"
+    },
+    "plone.restapi-angular": {
+        "path": "src/lib",
+        "package": "@plone/restapi-angular",
+        "url": "git@github.com:plone/plone.restapi-angular.git"
     }
   }
 ```
 
-By running the `mrdevelop` command, those repositories will be checked out in the `./src/develop` folder and they will be added into the `tsconfig.json` file in the `path` property, so the compiler will use them instead of the `node_modules` ones.
+By running the `mrdevelop` command, those repositories will be checked out in the `./src/develop` folder and they will be added into the `tsconfig.json` file in the `paths` property, so the compiler will use them instead of the `node_modules` ones.
+
+## Config file structure
+
+The entry key is used to name the folder where we checkout the repository in `./src/develop`.
+
+Properties:
+
+- `package`: Optional. Name of the package that will be mention in `paths`. If not provided, defauklt to entry key.
+- `path`: Optional. Source path in the repository. Will be concatenated to the local repository path in `tsconfig.json`.
+- `url`: Mandatory. Git repository remote URL.
+- `branch`: Optional. Branch name, default to `master`.

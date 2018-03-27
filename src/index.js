@@ -4,6 +4,8 @@ const fs = require('fs');
 const git = require('nodegit');
 const path = require('path');
 
+const DEVELOP_DIRECTORY = 'develop';
+
 const cloneRepository = function (name, path, url) {
   console.log(`Cloning ${name} from ${url}...`);
   const cloneOptions = {};
@@ -108,7 +110,7 @@ exports.develop = function develop() {
   const raw = fs.readFileSync('mr.developer.json');
   const pkgs = JSON.parse(raw);
   // Check for download directory; create if needed.
-  const repoDir = './src/develop';
+  const repoDir = path.join('src', DEVELOP_DIRECTORY);
   if (!fs.existsSync(repoDir)){
     console.log(`Creating repoDir ${repoDir}`);
     fs.mkdirSync(repoDir);
@@ -117,9 +119,22 @@ exports.develop = function develop() {
   else {
     console.log(`Using ${repoDir}`);
   }
+  const paths = {};
   // Checkout the repos.
-  for (let k in pkgs) {
-    checkoutRepository(k, repoDir, pkgs[k])
+  for (let name in pkgs) {
+    const settings = pkgs[name];
+    checkoutRepository(name, repoDir, settings);
+    const packageId = settings.package || name;
+    let packagePath = path.join('.', DEVELOP_DIRECTORY, name);
+    if (settings.path) {
+      packagePath = path.join(packagePath, settings.path);
+    }
+    paths[packageId] = [packagePath];
   }
+  // update paths in tsconfig.json
+  const tsconfig = JSON.parse(fs.readFileSync('tsconfig.json'));
+  tsconfig.compilerOptions.paths = paths;
+  console.log(`Update paths in tsconfig.json`);
+  fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig, null, 4));
   return pkgs;
 };
