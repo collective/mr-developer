@@ -25,6 +25,18 @@ Dependencies are listed in a file named `mr.developer.json`:
 
 By running the `mrdevelop` command, those repositories will be checked out in the `./src/develop` folder and they will be added into the `tsconfig.json` file in the `paths` property, so the compiler will use them instead of the `node_modules` ones.
 
+## Usage
+
+```
+$ mrdevelop
+```
+will fetch last changes from each repositories, and checkout the specified branch.
+
+```
+$ mrdevelop --no-fetch
+```
+will just checkout the specified branch.
+
 ## Config file structure
 
 The entry key is used to name the folder where we checkout the repository in `./src/develop`.

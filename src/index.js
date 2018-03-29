@@ -53,8 +53,29 @@ const createBranch = function (repository, branchname) {
   });
 };
 
+const getBranch = function (name, repository, branchname) {
+  return repository.getBranch(branchname)
+  .catch(function() {
+    // branch does not exist yet, we have to create it
+    return createBranch(repository, branchname);
+  });
+};
+
+const updateBranch = function (name, repository, branchname) {
+  return getBranch(name, repository, branchname)
+  .then(function(branch) {
+    console.log(`...update ${name} ${branchname}`);
+    return repository.mergeBranches(branch, 'refs/remotes/origin/' + branchname).then(function() {
+      return branch;
+    })
+    .catch(function (err) { console.error(`Cannot merge origin/${branchname}`, err); });
+  })
+  .then(function(branch) {
+    repository.checkoutRef(branch);
+  });
+};
+
 const updateRepository = function (name, repository, branchname) {
-  var branch;
   console.log(`Updating ${name}`);
   const fetchOpts = {
     callbacks: {
@@ -64,31 +85,14 @@ const updateRepository = function (name, repository, branchname) {
       }
     }
   };
-  repository.fetch('origin', fetchOpts)
+  return repository.fetch('origin', fetchOpts)
   .then(function() {
-    return repository.getBranch(branchname)
-    .then(function(reference) {
-      branch = reference;
-    })
-    .catch(function() {
-      // branch does not exist yet, we have to create it
-      return createBranch(repository, branchname).then(function(b) {
-        branch = b;
-      });
-    });
+    return updateBranch(name, repository, branchname);
   })
-  .then(function() {
-    console.log(`...update ${name} ${branchname}`);
-    return repository.mergeBranches(branch, 'refs/remotes/origin/' + branchname)
-    .catch(function (err) { console.error(`Cannot merge origin/${branchname}`, err); });
-  })
-  .then(function() {
-    repository.checkoutRef(branch);
-  })
-  .catch(function (err) { console.error(`Cannot update ${settings.url} origin/${branchname}`, err); });
+  .catch(function (err) { console.error(`Cannot fetch ${settings.url} origin/${branchname}`, err); });
 };
 
-const checkoutRepository = function(name, root, settings) {
+const checkoutRepository = function(name, root, settings, noFetch) {
   const pathToRepo = path.join(root, name);
   const branchname = settings.branch || 'master';
   var promise;
@@ -100,12 +104,16 @@ const checkoutRepository = function(name, root, settings) {
   }
 
   promise.then(function(repository) {
-    return updateRepository(name, repository, branchname);
+    if (noFetch) {
+      return updateBranch(name, repository, branchname);
+    } else {
+      return updateRepository(name, repository, branchname);
+    }
   })
   .catch(function(err) { console.log(err); });
 };
 
-exports.develop = function develop() {
+exports.develop = function develop(options) {
   // Read in mr.developer.json.
   const raw = fs.readFileSync('mr.developer.json');
   const pkgs = JSON.parse(raw);
@@ -123,7 +131,7 @@ exports.develop = function develop() {
   // Checkout the repos.
   for (let name in pkgs) {
     const settings = pkgs[name];
-    checkoutRepository(name, repoDir, settings);
+    checkoutRepository(name, repoDir, settings, options.noFetch);
     const packageId = settings.package || name;
     let packagePath = path.join('.', DEVELOP_DIRECTORY, name);
     if (settings.path) {
