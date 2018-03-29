@@ -1,6 +1,8 @@
-# ng-mr-developer
+# mr-developer
 
-ng-mr-developer is an NPM utility allowing to checkout various libraries from their Git repository as dependencies in an Angular project.
+mr-developer is an NPM utility allowing to checkout various libraries from their Git repository as dependencies in an NPM project.
+
+The paths to those local checkouts are added in `tsconfig.json` (or any file able to override `node_modules` )
 
 Dependencies are listed in a file named `mr.developer.json`:
 
@@ -33,3 +35,7 @@ Properties:
 - `path`: Optional. Source path in the repository. Will be concatenated to the local repository path in `tsconfig.json`.
 - `url`: Mandatory. Git repository remote URL.
 - `branch`: Optional. Branch name, default to `master`.
+
+## Credits
+
+mr-developer is shamelessly inspired by the well-known [mr.developer](https://pypi.python.org/pypi/mr.developer) Python buildout extension.
