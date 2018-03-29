@@ -1,6 +1,6 @@
 {
   "name": "mr-developer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Utility for installing NPM dependencies as git repos.",
   "main": "src/index.js",
   "bin": {
@@ -24,13 +24,15 @@
     "url": "https://github.com/collective/ng-mr-developer/issues"
   },
   "homepage": "https://github.com/collective/ng-mr-developer#readme",
+  "dependencies": {
+    "nodegit": "~0.21.2"
+  },
   "devDependencies": {
     "chai": "^4.1.2",
     "eslint": "^4.9.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
     "mocha": "^4.0.1",
-    "mock-fs": "^4.4.2",
-    "nodegit": "~0.21.2"
+    "mock-fs": "^4.4.2"
   }
 }
