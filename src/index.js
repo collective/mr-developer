@@ -26,7 +26,7 @@ const cloneRepository = function (name, path, url) {
     console.log(`...cloned ${name} at ${path}`);
     return repo;
   })
-  .catch(function (err) { console.log(`Cannot clone ${url}`, err); });;
+  .catch(function (err) { console.error(`Cannot clone ${url}`, err); });;
 };
 
 const openRepository = function (name, path) {
@@ -35,7 +35,7 @@ const openRepository = function (name, path) {
     console.log(`Found ${name} at ${path}`);
     return repo;
   })
-  .catch(function (err) { console.log(`Cannot open ${path}`, err); });
+  .catch(function (err) { console.error(`Cannot open ${path}`, err); });
 };
 
 const createBranch = function (repository, branchname) {
@@ -80,12 +80,12 @@ const updateRepository = function (name, repository, branchname) {
   .then(function() {
     console.log(`...update ${name} ${branchname}`);
     return repository.mergeBranches(branch, 'refs/remotes/origin/' + branchname)
-    .catch(function (err) { console.log(`Cannot merge origin/${branchname}`, err); });
+    .catch(function (err) { console.error(`Cannot merge origin/${branchname}`, err); });
   })
   .then(function() {
     repository.checkoutRef(branch);
   })
-  .catch(function (err) { console.log(`Cannot update ${settings.url} origin/${branchname}`, err); });
+  .catch(function (err) { console.error(`Cannot update ${settings.url} origin/${branchname}`, err); });
 };
 
 const checkoutRepository = function(name, root, settings) {
