@@ -103,7 +103,7 @@ const checkoutRepository = function(name, root, settings, noFetch) {
     promise = openRepository(name, pathToRepo);
   }
 
-  promise.then(function(repository) {
+  return promise.then(function(repository) {
     if (noFetch) {
       return updateBranch(name, repository, branchname);
     } else {
@@ -113,12 +113,9 @@ const checkoutRepository = function(name, root, settings, noFetch) {
   .catch(function(err) { console.log(err); });
 };
 
-exports.develop = function develop(options) {
-  // Read in mr.developer.json.
-  const raw = fs.readFileSync('mr.developer.json');
-  const pkgs = JSON.parse(raw);
+const getRepoDir = function (root) {
   // Check for download directory; create if needed.
-  const repoDir = path.join('src', DEVELOP_DIRECTORY);
+  const repoDir = path.join(root || '.', 'src', DEVELOP_DIRECTORY);
   if (!fs.existsSync(repoDir)){
     console.log(`Creating repoDir ${repoDir}`);
     fs.mkdirSync(repoDir);
@@ -127,6 +124,14 @@ exports.develop = function develop(options) {
   else {
     console.log(`Using ${repoDir}`);
   }
+  return repoDir;
+};
+
+const develop = function develop(options) {
+  // Read in mr.developer.json.
+  const raw = fs.readFileSync('mr.developer.json');
+  const pkgs = JSON.parse(raw);
+  const repoDir = getRepoDir(options.root);
   const paths = {};
   // Checkout the repos.
   for (let name in pkgs) {
@@ -146,3 +151,13 @@ exports.develop = function develop(options) {
   fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig, null, 4));
   return pkgs;
 };
+
+exports.cloneRepository = cloneRepository;
+exports.openRepository = openRepository;
+exports.createBranch = createBranch;
+exports.getBranch = getBranch;
+exports.updateBranch = updateBranch;
+exports.updateRepository = updateRepository;
+exports.checkoutRepository = checkoutRepository;
+exports.getRepoDir = getRepoDir;
+exports.develop = develop;

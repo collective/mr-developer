@@ -3,5 +3,7 @@
 .jshintrc
 node_modules/
 src/develop
-mr.developer.json
-tsconfig.json
+/mr.developer.json
+/tsconfig.json
+/test/fake
+/test/src
