@@ -64,7 +64,7 @@ const getBranch = function (name, repository, branchname) {
 const updateBranch = function (name, repository, branchname) {
   return getBranch(name, repository, branchname)
   .then(function(branch) {
-    console.log(`...update ${name} ${branchname}`);
+    console.log(`...update ${name} to branch ${branchname}`);
     return repository.mergeBranches(branch, 'refs/remotes/origin/' + branchname).then(function() {
       return branch;
     })
@@ -75,7 +75,26 @@ const updateBranch = function (name, repository, branchname) {
   });
 };
 
-const updateRepository = function (name, repository, branchname) {
+const getTag = function (name, repository, tagName) {
+  return repository.getReference(`refs/tags/${tagName}`)
+  .then(function(ref) {
+    return ref.peel(git.Object.TYPE.COMMIT);
+  })
+  .then(function(commit) {
+    console.log(`...update ${name} to tag ${tagName}`);
+    return repository.setHeadDetached(commit, repository.defaultSignature, "Checkout: HEAD " + commit.id());
+  });
+};
+
+const setHead = function (name, repository, settings) {
+  if (settings.tag) {
+    return getTag(name, repository, settings.tag);
+  } else {
+    return updateBranch(name, repository, settings.branch || 'master')
+  }
+}
+
+const updateRepository = function (name, repository) {
   console.log(`Updating ${name}`);
   const fetchOpts = {
     callbacks: {
@@ -87,14 +106,15 @@ const updateRepository = function (name, repository, branchname) {
   };
   return repository.fetch('origin', fetchOpts)
   .then(function() {
-    return updateBranch(name, repository, branchname);
+    return repository;
   })
-  .catch(function (err) { console.error(`Cannot fetch ${settings.url} origin/${branchname}`, err); });
+  .catch(function (err) { console.error(`Cannot fetch ${settings.url} origin`, err); });
 };
 
 const checkoutRepository = function(name, root, settings, noFetch) {
   const pathToRepo = path.join(root, name);
-  const branchname = settings.branch || 'master';
+  
+  const tag = settings.tag;
   var promise;
 
   if (!fs.existsSync(pathToRepo)) {
@@ -105,9 +125,12 @@ const checkoutRepository = function(name, root, settings, noFetch) {
 
   return promise.then(function(repository) {
     if (noFetch) {
-      return updateBranch(name, repository, branchname);
+      return setHead(name, repository, settings);
     } else {
-      return updateRepository(name, repository, branchname);
+      return updateRepository(name, repository)
+      .then(function() {
+        return setHead(name, repository, settings);
+      });
     }
   })
   .catch(function(err) { console.log(err); });
@@ -157,6 +180,8 @@ exports.openRepository = openRepository;
 exports.createBranch = createBranch;
 exports.getBranch = getBranch;
 exports.updateBranch = updateBranch;
+exports.getTag = getTag;
+exports.setHead = setHead;
 exports.updateRepository = updateRepository;
 exports.checkoutRepository = checkoutRepository;
 exports.getRepoDir = getRepoDir;

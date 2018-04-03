@@ -9,7 +9,8 @@ Dependencies are listed in a file named `mr.developer.json`:
 ```
   {
     "ngx-tooltip": {
-        "url": "https://github.com/pleerock/ngx-tooltip.git"
+        "url": "https://github.com/pleerock/ngx-tooltip.git",
+        "tag": "1.3.4"
     },
     "angular-traversal": {
         "url": "https://github.com/makinacorpus/angular-traversal",
@@ -46,7 +47,8 @@ Properties:
 - `package`: Optional. Name of the package that will be mention in `paths`. If not provided, defauklt to entry key.
 - `path`: Optional. Source path in the repository. Will be concatenated to the local repository path in `tsconfig.json`.
 - `url`: Mandatory. Git repository remote URL.
-- `branch`: Optional. Branch name, default to `master`.
+- `branch`: Optional. Branch name, default to `master`. Ignored if `tag` is defined.
+- `tag`: Optional. Tag name.
 
 ## Credits
 
