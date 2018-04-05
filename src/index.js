@@ -53,7 +53,7 @@ const createBranch = function (repository, branchname) {
   });
 };
 
-const getBranch = function (name, repository, branchname) {
+const getBranch = function (repository, branchname) {
   return repository.getBranch(branchname)
   .catch(function() {
     // branch does not exist yet, we have to create it
@@ -62,7 +62,7 @@ const getBranch = function (name, repository, branchname) {
 };
 
 const updateBranch = function (name, repository, branchname) {
-  return getBranch(name, repository, branchname)
+  return getBranch(repository, branchname)
   .then(function(branch) {
     console.log(`...update ${name} to branch ${branchname}`);
     return repository.mergeBranches(branch, 'refs/remotes/origin/' + branchname).then(function() {
