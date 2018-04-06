@@ -46,10 +46,11 @@ const createBranch = function (repository, branchname) {
       commit,
       0,
       repository.defaultSignature(),
-      'Created new-branch on HEAD')
-    .then(function() {
-      return repository.getBranch(branchname);
-    });
+      'Created new-branch on HEAD'
+    );
+  })
+  .then(function() {
+    return repository.getBranch(branchname);
   });
 };
 
@@ -71,7 +72,7 @@ const updateBranch = function (name, repository, branchname) {
     .catch(function (err) { console.error(`Cannot merge origin/${branchname}`, err); });
   })
   .then(function(branch) {
-    repository.checkoutRef(branch);
+    return repository.checkoutRef(branch);
   });
 };
 
@@ -133,7 +134,7 @@ const checkoutRepository = function(name, root, settings, noFetch) {
       });
     }
   })
-  .catch(function(err) { console.log(err); });
+  .catch(err => console.log(err));
 };
 
 const getRepoDir = function (root) {
@@ -143,23 +144,22 @@ const getRepoDir = function (root) {
     console.log(`Creating repoDir ${repoDir}`);
     fs.mkdirSync(repoDir);
   }
-  //TODO: remove.
   else {
     console.log(`Using ${repoDir}`);
   }
   return repoDir;
 };
 
-const develop = function develop(options) {
+const develop = async function develop(options) {
   // Read in mr.developer.json.
-  const raw = fs.readFileSync('mr.developer.json');
+  const raw = fs.readFileSync(path.join(options.root || '.', 'mr.developer.json'));
   const pkgs = JSON.parse(raw);
   const repoDir = getRepoDir(options.root);
   const paths = {};
   // Checkout the repos.
   for (let name in pkgs) {
     const settings = pkgs[name];
-    checkoutRepository(name, repoDir, settings, options.noFetch);
+    await checkoutRepository(name, repoDir, settings, options.noFetch);
     const packageId = settings.package || name;
     let packagePath = path.join('.', DEVELOP_DIRECTORY, name);
     if (settings.path) {
@@ -168,11 +168,10 @@ const develop = function develop(options) {
     paths[packageId] = [packagePath];
   }
   // update paths in tsconfig.json
-  const tsconfig = JSON.parse(fs.readFileSync('tsconfig.json'));
+  const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', 'tsconfig.json')));
   tsconfig.compilerOptions.paths = paths;
   console.log(`Update paths in tsconfig.json`);
-  fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig, null, 4));
-  return pkgs;
+  fs.writeFileSync(path.join(options.root || '.', 'tsconfig.json'), JSON.stringify(tsconfig, null, 4));
 };
 
 exports.cloneRepository = cloneRepository;
