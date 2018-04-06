@@ -3,6 +3,7 @@
 const fs = require('fs');
 const git = require('nodegit');
 const path = require('path');
+const colors = require('colors/safe');
 
 const DEVELOP_DIRECTORY = 'develop';
 
@@ -17,16 +18,16 @@ const cloneRepository = function (name, path, url) {
       },
       transferProgress: function(stats) {
         const progress = Math.round(100 * stats.receivedObjects() / stats.totalObjects());
-        return console.log(`Loading ${name} ${progress}%...`);
+        return console.log(colors.blue(`Loading ${name} ${progress}%...`));
       }
     }
   };
   return git.Clone(url, path, cloneOptions)
   .then(function (repo) {
-    console.log(`...cloned ${name} at ${path}`);
+    console.log(colors.green(`✓ cloned ${name} at ${path}`));
     return repo;
   })
-  .catch(function (err) { console.error(`Cannot clone ${url}`, err); });;
+  .catch(function (err) { console.error(colors.red(`Cannot clone ${url}`, err)); });;
 };
 
 const openRepository = function (name, path) {
@@ -35,7 +36,7 @@ const openRepository = function (name, path) {
     console.log(`Found ${name} at ${path}`);
     return repo;
   })
-  .catch(function (err) { console.error(`Cannot open ${path}`, err); });
+  .catch(function (err) { console.error(colors.red(`Cannot open ${path}`, err)); });
 };
 
 const createBranch = function (repository, branchname) {
@@ -65,11 +66,11 @@ const getBranch = function (repository, branchname) {
 const updateBranch = function (name, repository, branchname) {
   return getBranch(repository, branchname)
   .then(function(branch) {
-    console.log(`...update ${name} to branch ${branchname}`);
+    console.log(colors.green(`✓ update ${name} to branch ${branchname}`));
     return repository.mergeBranches(branch, 'refs/remotes/origin/' + branchname).then(function() {
       return branch;
     })
-    .catch(function (err) { console.error(`Cannot merge origin/${branchname}`, err); });
+    .catch(function (err) { console.error(colors.red(`Cannot merge origin/${branchname}`, err)); });
   })
   .then(function(branch) {
     return repository.checkoutRef(branch);
@@ -82,7 +83,7 @@ const getTag = function (name, repository, tagName) {
     return ref.peel(git.Object.TYPE.COMMIT);
   })
   .then(function(commit) {
-    console.log(`...update ${name} to tag ${tagName}`);
+    console.log(colors.green(`✓ update ${name} to tag ${tagName}`));
     return repository.setHeadDetached(commit, repository.defaultSignature, "Checkout: HEAD " + commit.id());
   });
 };
@@ -109,7 +110,7 @@ const updateRepository = function (name, repository) {
   .then(function() {
     return repository;
   })
-  .catch(function (err) { console.error(`Cannot fetch ${settings.url} origin`, err); });
+  .catch(function (err) { console.error(colors.red(`Cannot fetch ${settings.url} origin`, err)); });
 };
 
 const checkoutRepository = function(name, root, settings, noFetch) {
@@ -134,7 +135,7 @@ const checkoutRepository = function(name, root, settings, noFetch) {
       });
     }
   })
-  .catch(err => console.log(err));
+  .catch(function (err) { console.error(colors.red(err)); });
 };
 
 const getRepoDir = function (root) {
@@ -170,7 +171,7 @@ const develop = async function develop(options) {
   // update paths in tsconfig.json
   const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', 'tsconfig.json')));
   tsconfig.compilerOptions.paths = paths;
-  console.log(`Update paths in tsconfig.json`);
+  console.log(colors.yellow(`Update paths in tsconfig.json`));
   fs.writeFileSync(path.join(options.root || '.', 'tsconfig.json'), JSON.stringify(tsconfig, null, 4));
 };
 

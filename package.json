@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/collective/ng-mr-developer#readme",
   "dependencies": {
+    "colors": "~1.2.1",
     "nodegit": "~0.21.2"
   },
   "devDependencies": {
