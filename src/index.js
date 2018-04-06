@@ -66,8 +66,8 @@ const getBranch = function (repository, branchname) {
 const updateBranch = function (name, repository, branchname) {
   return getBranch(repository, branchname)
   .then(function(branch) {
-    console.log(colors.green(`✓ update ${name} to branch ${branchname}`));
     return repository.mergeBranches(branch, 'refs/remotes/origin/' + branchname).then(function() {
+      console.log(colors.green(`✓ update ${name} to branch ${branchname}`));
       return branch;
     })
     .catch(function (err) { console.error(colors.red(`Cannot merge origin/${branchname}`, err)); });
@@ -89,11 +89,18 @@ const getTag = function (name, repository, tagName) {
 };
 
 const setHead = function (name, repository, settings) {
-  if (settings.tag) {
-    return getTag(name, repository, settings.tag);
-  } else {
-    return updateBranch(name, repository, settings.branch || 'master')
-  }
+  return repository.getStatus().then(function (status) {
+    if (status.length > 0) {
+      console.log(colors.yellow.inverse(`Cannot update ${name}. Working tree not clean.`));
+      return Promise.resolve({abort: true});
+    } else {
+      if (settings.tag) {
+        return getTag(name, repository, settings.tag);
+      } else {
+        return updateBranch(name, repository, settings.branch || 'master')
+      }
+    }
+  });
 }
 
 const updateRepository = function (name, repository) {
