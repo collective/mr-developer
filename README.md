@@ -2,7 +2,7 @@
 
 mr-developer is an NPM utility allowing to checkout various libraries from their Git repository as dependencies in an NPM project.
 
-The paths to those local checkouts are added in `tsconfig.json` (or any file able to override `node_modules` )
+The paths to those local checkouts are added in `tsconfig.json` (or any file able to override `node_modules` packages by providing custom paths).
 
 Dependencies are listed in a file named `mr.developer.json`:
 
@@ -32,6 +32,8 @@ By running the `mrdevelop` command, those repositories will be checked out in th
 $ mrdevelop
 ```
 will fetch last changes from each repositories, and checkout the specified branch.
+
+If a repository contains non committed changes or if the merge has conflicts, it will not be updated, and the user will have to update it manually.
 
 ```
 $ mrdevelop --no-fetch

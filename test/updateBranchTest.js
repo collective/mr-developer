@@ -19,6 +19,23 @@ describe('updateBranch', () => {
         await developer.updateBranch('repo1', repo, 'staging');
         const commit = await repo.getHeadCommit();
 		expect(commit.message()).to.be.equal('Modify file 1\n');
+	});
+	
+	it('aborts if conflict', async () => {
+		await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
+        let repo = await developer.openRepository('repo1', './test/src/develop/repo1');
+		await developer.updateBranch('repo1', repo, 'staging');
+		
+		// let's change both remote and local
+		await exec('./test/test-add-commit.sh');
+		await exec('./test/test-create-conflict.sh');
+
+		repo = await developer.openRepository('repo1', './test/src/develop/repo1');
+		await developer.updateRepository('repo1', repo);
+		await developer.updateBranch('repo1', repo, 'staging');
+		
+        const commit = await repo.getHeadCommit();
+		expect(commit.message()).to.be.equal('I modify file1 too\n');
     });
 
 	afterEach(() => {

@@ -70,10 +70,17 @@ const updateBranch = function (name, repository, branchname) {
       console.log(colors.green(`✓ update ${name} to branch ${branchname}`));
       return branch;
     })
-    .catch(function (err) { console.error(colors.red(`Cannot merge origin/${branchname}`, err)); });
+    .catch(function (index) {
+      console.error(colors.yellow.inverse(`Cannot merge origin/${branchname}. Please merge manually.`));
+      return {abort: true};
+    });
   })
   .then(function(branch) {
-    return repository.checkoutRef(branch);
+    if (branch.abort) {
+      return {abort: true};
+    } else {
+      return repository.checkoutRef(branch);
+    }
   });
 };
 
@@ -91,8 +98,8 @@ const getTag = function (name, repository, tagName) {
 const setHead = function (name, repository, settings) {
   return repository.getStatus().then(function (status) {
     if (status.length > 0) {
-      console.log(colors.yellow.inverse(`Cannot update ${name}. Working tree not clean.`));
-      return Promise.resolve({abort: true});
+      console.log(colors.yellow.inverse(`Cannot update ${name}. Commit your changes first.`));
+      return {abort: true};
     } else {
       if (settings.tag) {
         return getTag(name, repository, settings.tag);
