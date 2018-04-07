@@ -2,26 +2,28 @@
 
 mr-developer is an NPM utility allowing to checkout various libraries from their Git repository as dependencies in an NPM project.
 
+![screenshot](https://raw.githubusercontent.com/collective/ng-mr-developer/eric-changes/docs/mr-developer.jpeg "Console screenshot")
+
 The paths to those local checkouts are added in `tsconfig.json` (or any file able to override `node_modules` packages by providing custom paths).
 
 Dependencies are listed in a file named `mr.developer.json`:
 
 ```
   {
-    "ngx-tooltip": {
-        "url": "https://github.com/pleerock/ngx-tooltip.git",
-        "tag": "1.3.4"
-    },
-    "angular-traversal": {
-        "url": "https://github.com/makinacorpus/angular-traversal",
-        "branch": "staging"
-    },
-    "plone.restapi-angular": {
-        "path": "src/lib",
-        "package": "@plone/restapi-angular",
-        "url": "git@github.com:plone/plone.restapi-angular.git"
+        "ngx-tooltip": {
+            "url": "https://github.com/pleerock/ngx-tooltip.git"
+        },
+        "angular-traversal": {
+            "url": "https://github.com/makinacorpus/angular-traversal",
+            "branch": "test-as-subproject"
+        },
+        "plone.restapi-angular": {
+            "path": "src/lib",
+            "package": "@plone/restapi-angular",
+            "url": "git@github.com:plone/plone.restapi-angular.git",
+            "tag": "1.3.1"
+        }
     }
-  }
 ```
 
 By running the `mrdevelop` command, those repositories will be checked out in the `./src/develop` folder and they will be added into the `tsconfig.json` file in the `paths` property, so the compiler will use them instead of the `node_modules` ones.

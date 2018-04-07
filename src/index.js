@@ -156,11 +156,11 @@ const getRepoDir = function (root) {
   // Check for download directory; create if needed.
   const repoDir = path.join(root || '.', 'src', DEVELOP_DIRECTORY);
   if (!fs.existsSync(repoDir)){
-    console.log(`Creating repoDir ${repoDir}`);
+    console.log(`\nCreating repoDir ${repoDir}`);
     fs.mkdirSync(repoDir);
   }
   else {
-    console.log(`Using ${repoDir}`);
+    console.log(`\nUsing ${repoDir}`);
   }
   return repoDir;
 };
@@ -185,7 +185,7 @@ const develop = async function develop(options) {
   // update paths in tsconfig.json
   const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', 'tsconfig.json')));
   tsconfig.compilerOptions.paths = paths;
-  console.log(colors.yellow(`Update paths in tsconfig.json`));
+  console.log(colors.yellow(`Update paths in tsconfig.json\n`));
   fs.writeFileSync(path.join(options.root || '.', 'tsconfig.json'), JSON.stringify(tsconfig, null, 4));
 };
 
