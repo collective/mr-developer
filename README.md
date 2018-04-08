@@ -44,6 +44,11 @@ $ mrdevelop --no-fetch
 ```
 will just checkout the specified branch.
 
+```
+$ mrdevelop --config=jsconfig.json
+```
+allows to update a different file than `tsconfig.json` (might be useful in non-Angular context).
+
 ## Config file structure
 
 The entry key is used to name the folder where we checkout the repository in `./src/develop`.

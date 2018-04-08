@@ -182,11 +182,12 @@ const develop = async function develop(options) {
     }
     paths[packageId] = [packagePath];
   }
-  // update paths in tsconfig.json
-  const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', 'tsconfig.json')));
+  // update paths in configFile
+  const configFile = options.configFile || 'tsconfig.json';
+  const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', configFile)));
   tsconfig.compilerOptions.paths = paths;
   console.log(colors.yellow(`Update paths in tsconfig.json\n`));
-  fs.writeFileSync(path.join(options.root || '.', 'tsconfig.json'), JSON.stringify(tsconfig, null, 4));
+  fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
 };
 
 exports.cloneRepository = cloneRepository;
