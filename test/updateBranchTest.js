@@ -5,6 +5,7 @@ const rimraf = require('rimraf');
 const developer = require('../src/index.js');
 const expect = chai.expect;
 const util = require('util');
+const fs = require('fs');
 const exec = util.promisify(require('child_process').exec);
 
 describe('updateBranch', () => {
@@ -19,6 +20,8 @@ describe('updateBranch', () => {
         await developer.updateBranch('repo1', repo, 'staging');
         const commit = await repo.getHeadCommit();
 		expect(commit.message()).to.be.equal('Modify file 1\n');
+		const txt = fs.readFileSync('./test/src/develop/repo1/file1.txt').toString();
+		expect(txt).to.be.equal('File 1\nMore text\n');
 	});
 	
 	it('aborts if conflict', async () => {
@@ -36,6 +39,8 @@ describe('updateBranch', () => {
 		
         const commit = await repo.getHeadCommit();
 		expect(commit.message()).to.be.equal('I modify file1 too\n');
+		const txt = fs.readFileSync('./test/src/develop/repo1/file1.txt').toString();
+		expect(txt).to.be.equal('Totally new content\n');
     });
 
 	afterEach(() => {
