@@ -5,6 +5,7 @@ const rimraf = require('rimraf');
 const developer = require('../src/index.js');
 const expect = chai.expect;
 const util = require('util');
+const fs = require('fs');
 const exec = util.promisify(require('child_process').exec);
 
 describe('getTag', () => {
@@ -19,6 +20,7 @@ describe('getTag', () => {
         await developer.getTag('repo1', repo, 'v1');
         const commit = await repo.getHeadCommit();
 		expect(commit.message()).to.be.equal('Add file 1\n');
+		expect(fs.existsSync('./test/src/develop/repo1/file2.txt')).to.be.false;
     });
 
 	afterEach(() => {

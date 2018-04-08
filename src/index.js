@@ -85,13 +85,21 @@ const updateBranch = function (name, repository, branchname) {
 };
 
 const getTag = function (name, repository, tagName) {
-  return repository.getReference(`refs/tags/${tagName}`)
-  .then(function(ref) {
+  return git.Reference
+  .dwim(repository, `refs/tags/${tagName}`)
+  .then(function (ref) {
     return ref.peel(git.Object.TYPE.COMMIT);
   })
-  .then(function(commit) {
-    console.log(colors.green(`✓ update ${name} to tag ${tagName}`));
-    return repository.setHeadDetached(commit, repository.defaultSignature, "Checkout: HEAD " + commit.id());
+  .then(function (ref) {
+    return repository.getCommit(ref);
+  })
+  .then(function (commit) {
+    return git.Checkout
+    .tree(repository, commit, { checkoutStrategy: git.Checkout.STRATEGY.SAFE })
+    .then(function () {
+      return repository.setHeadDetached(commit, repository.defaultSignature,
+        'Checkout: HEAD ' + commit.id());
+    })
   });
 };
 
