@@ -7,9 +7,17 @@ mkdir fake-remote
 cd fake-remote
 git init repo1
 cd repo1
-echo "File 1" > file1.txt
+echo "fffile 1" > file1.txt
 git add file1.txt
 git commit -am "Add file 1"
+git checkout -b conflicting
+rm file1.txt
+git add .
+git commit -m "Delete file 1"
+git checkout master
+echo "File 1" > file1.txt
+git add file1.txt
+git commit --amend --no-edit
 git tag v1
 echo "File 2" > file2.txt
 git add file2.txt

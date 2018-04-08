@@ -16,7 +16,7 @@ describe('createBranch', () => {
 	it('creates a local branch', async () => {
 		await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
 		const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
-		const branch = await developer.createBranch(repo, 'newbranch')
+		const branch = await developer.createBranch(repo, 'conflicting')
 		expect(branch.isBranch()).to.be.equal(1);
 	});
 

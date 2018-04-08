@@ -40,7 +40,13 @@ const openRepository = function (name, path) {
 };
 
 const createBranch = function (repository, branchname) {
-  return repository.getHeadCommit()
+  return repository.getBranch('refs/remotes/origin/' + branchname)
+  .then(function(branch) {
+    return repository.checkoutRef(branch);
+  })
+  .then(function() {
+    return repository.getHeadCommit();
+  })
   .then(function(commit) {
     return repository.createBranch(
       branchname,
