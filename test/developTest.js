@@ -12,7 +12,7 @@ const fs = require('fs');
 describe('develop', () => {
 	beforeEach(async () => {
         await exec('./test/test-setup.sh');
-		developer.getRepoDir('./test');
+		await Promise.resolve(developer.getRepoDir('./test'));
 	});
 	
 	it('clones all the repositories indicated in mr.developer.json', async () => {

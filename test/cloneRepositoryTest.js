@@ -11,7 +11,7 @@ const exec = util.promisify(require('child_process').exec);
 describe('cloneRepository', () => {
 	beforeEach(async () => {
         await exec('./test/test-setup.sh');
-		developer.getRepoDir('./test');
+		await Promise.resolve(developer.getRepoDir('./test'));
 	});
 
     it('puts the repository in ./src/develop', async () => {

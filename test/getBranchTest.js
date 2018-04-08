@@ -10,7 +10,7 @@ const exec = util.promisify(require('child_process').exec);
 describe('getBranch', () => {
 	beforeEach(async () => {
         await exec('./test/test-setup.sh');
-		developer.getRepoDir('./test');
+		await Promise.resolve(developer.getRepoDir('./test'));
 	});
 
 	it('sets current branch', async () => {

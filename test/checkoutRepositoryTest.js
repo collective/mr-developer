@@ -11,7 +11,7 @@ const exec = util.promisify(require('child_process').exec);
 describe('checkoutRepository', () => {
 	beforeEach(async () => {
         await exec('./test/test-setup.sh');
-		developer.getRepoDir('./test');
+		await Promise.resolve(developer.getRepoDir('./test'));
 	});
 	
 	it('clones the repository locally and checkout the proper branch', async () => {

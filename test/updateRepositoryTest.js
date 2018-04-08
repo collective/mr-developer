@@ -11,7 +11,7 @@ const exec = util.promisify(require('child_process').exec);
 describe('updateRepository', () => {
 	beforeEach(async () => {
         await exec('./test/test-setup.sh');
-		developer.getRepoDir('./test');
+		await Promise.resolve(developer.getRepoDir('./test'));
 	});
 	
 	it('fetchs last changes from remote', async () => {
