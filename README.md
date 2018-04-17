@@ -30,6 +30,8 @@ Dependencies are listed in a file named `mr.developer.json`:
 
 By running the `mrdevelop` command, those repositories will be checked out in the `./src/develop` folder and they will be added into the `tsconfig.json` file in the `paths` property, so the compiler will use them instead of the `node_modules` ones.
 
+Note: it also sets the `baseUrl` value to `"src"`.
+
 ## Usage
 
 ```
@@ -60,6 +62,39 @@ Properties:
 - `url`: Mandatory. Git repository remote URL.
 - `branch`: Optional. Branch name, default to `master`. Ignored if `tag` is defined.
 - `tag`: Optional. Tag name.
+
+## Usage with React
+
+Create a minimal `jsconfig.json` file in the project root (see https://code.visualstudio.com/docs/languages/jsconfig):
+
+```
+{
+    "compilerOptions": {}
+}
+```
+
+And run:
+
+```
+$ mrdevelop --config=jsconfig.json
+```
+
+To make sure the `jsconfig.json` paths defined by mr-developer are used in Webpack, change your `webpack.config.js` like this:
+
+```
+const pathsConfig = require('./jsconfig').compilerOptions.paths;
+const alias = {};
+Object.keys(pathsConfig).forEach(package => {
+  alias[package] = pathsConfig[package][0];
+});
+
+...
+
+resolve: {
+    ...
+    alias: alias
+}
+```
 
 ## Credits
 
