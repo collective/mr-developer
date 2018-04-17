@@ -32,6 +32,7 @@ describe('develop', () => {
 		await developer.develop({root: './test'});
         const raw = fs.readFileSync('./test/tsconfig.json');
         const config = JSON.parse(raw);
+        expect(config.compilerOptions.baseUrl).to.be.equal('src');
         expect(config.compilerOptions.paths.repo1[0]).to.be.equal('develop/repo1');
         expect(config.compilerOptions.paths['@test/package2'][0]).to.be.equal('develop/repo2');
         expect(config.compilerOptions.paths.repo3[0]).to.be.equal('develop/repo3/lib/core');

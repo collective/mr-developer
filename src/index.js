@@ -200,6 +200,7 @@ const develop = async function develop(options) {
   const configFile = options.configFile || 'tsconfig.json';
   const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', configFile)));
   tsconfig.compilerOptions.paths = paths;
+  tsconfig.compilerOptions.baseUrl = 'src';
   console.log(colors.yellow(`Update paths in tsconfig.json\n`));
   fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
 };
