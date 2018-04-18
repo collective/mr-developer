@@ -103,6 +103,7 @@ const getTag = function (name, repository, tagName) {
     return git.Checkout
     .tree(repository, commit, { checkoutStrategy: git.Checkout.STRATEGY.SAFE })
     .then(function () {
+      console.log(colors.green(`✓ update ${name} to tag ${tagName}`));
       return repository.setHeadDetached(commit, repository.defaultSignature,
         'Checkout: HEAD ' + commit.id());
     })
