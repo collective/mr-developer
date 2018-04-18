@@ -2,7 +2,9 @@
 
 [![Build Status](https://travis-ci.org/collective/ng-mr-developer.svg?branch=master)](https://travis-ci.org/collective/ng-mr-developer)
 
-mr-developer is an NPM utility allowing to checkout various libraries from their Git repository as dependencies in an NPM project.
+mr-developer is an NodeJS utility that makes it easy to work with NPM projects containing lots of packages, of which you only want to develop some.
+
+It allows to replace any given dependency with a checkout from its Git repository.
 
 ![screenshot](https://raw.githubusercontent.com/collective/ng-mr-developer/eric-changes/docs/mr-developer.jpeg "Console screenshot")
 
