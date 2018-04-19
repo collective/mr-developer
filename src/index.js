@@ -195,7 +195,7 @@ const develop = async function develop(options) {
     if (settings.path) {
       packagePath = path.join(packagePath, settings.path);
     }
-    paths[packageId] = [packagePath];
+    paths[packageId] = [packagePath.replace(/\\/g, '/')]; // we do not want Windows separators here
   }
   // update paths in configFile
   const configFile = options.configFile || 'tsconfig.json';
