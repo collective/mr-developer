@@ -5,6 +5,7 @@ const rimraf = require('rimraf');
 const developer = require('../src/index.js');
 const expect = chai.expect;
 const util = require('util');
+const fs = require('fs');
 const exec = util.promisify(require('child_process').exec);
 
 describe('setHead', () => {
@@ -47,7 +48,23 @@ describe('setHead', () => {
 		
 		repo = await developer.openRepository('repo1', './test/src/develop/repo1');
 		const head = await developer.setHead('repo1', repo, {'branch': 'staging'});
-		expect(head.abort).to.be.true;
+        expect(head.abort).to.be.true;
+        const txt = fs.readFileSync('./test/src/develop/repo1/file1.txt').toString();
+		expect(txt).to.be.equal('File 1\nMore text\nLocal change\n');
+    });
+    
+    it('resets to HEAD if status is not clean but reset=true', async () => {
+		await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
+        let repo = await developer.openRepository('repo1', './test/src/develop/repo1');
+        await developer.setHead('repo1', repo, {'branch': 'staging'});
+		
+		// now let's make a local change
+		await exec('./test/test-local-change.sh');
+		
+		repo = await developer.openRepository('repo1', './test/src/develop/repo1');
+		await developer.setHead('repo1', repo, {'branch': 'staging'}, true);
+		const txt = fs.readFileSync('./test/src/develop/repo1/file1.txt').toString();
+		expect(txt).to.be.equal('File 1\nMore text\n');
 	});
 
 	afterEach(() => {

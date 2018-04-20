@@ -46,7 +46,12 @@ If a repository contains non committed changes or if the merge has conflicts, it
 ```
 $ mrdevelop --no-fetch
 ```
-will just checkout the specified branch.
+will just checkout the specified branches or tags without fetching the remote repositories.
+
+```
+$ mrdevelop --hard
+```
+will do a hard reset before updating, so local changes are overriden.
 
 ```
 $ mrdevelop --config=jsconfig.json

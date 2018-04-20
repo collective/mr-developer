@@ -110,11 +110,30 @@ const getTag = function (name, repository, tagName) {
   });
 };
 
-const setHead = function (name, repository, settings) {
-  return repository.getStatus().then(function (status) {
-    if (status.length > 0) {
-      console.log(colors.yellow.inverse(`Cannot update ${name}. Commit your changes first.`));
-      return {abort: true};
+const setHead = function (name, repository, settings, reset) {
+  let promise;
+  if (reset) {
+    promise = repository.getHeadCommit()
+    .then(function(ref) {
+      return git.Reset.reset(repository, ref, git.Reset.TYPE.HARD);
+    })
+    .then(function() {
+      console.log(colors.yellow.inverse(`Hard reset in ${name}.`));
+      return {};
+    });
+  } else {
+    promise = repository.getStatus().then(function (status) {
+      if (status.length > 0) {
+        console.log(colors.yellow.inverse(`Cannot update ${name}. Commit your changes first.`));
+        return {abort: true};
+      } else {
+        return {};
+      }
+    });
+  }
+  return promise.then(function(res) {
+    if (res.abort) {
+      return res;
     } else {
       if (settings.tag) {
         return getTag(name, repository, settings.tag);
@@ -142,7 +161,7 @@ const updateRepository = function (name, repository) {
   .catch(function (err) { console.error(colors.red(`Cannot fetch ${settings.url} origin`, err)); });
 };
 
-const checkoutRepository = function(name, root, settings, noFetch) {
+const checkoutRepository = function(name, root, settings, noFetch, reset) {
   const pathToRepo = path.join(root, name);
   
   const tag = settings.tag;
@@ -156,11 +175,11 @@ const checkoutRepository = function(name, root, settings, noFetch) {
 
   return promise.then(function(repository) {
     if (noFetch) {
-      return setHead(name, repository, settings);
+      return setHead(name, repository, settings, reset);
     } else {
       return updateRepository(name, repository)
       .then(function() {
-        return setHead(name, repository, settings);
+        return setHead(name, repository, settings, reset);
       });
     }
   })
@@ -189,7 +208,7 @@ const develop = async function develop(options) {
   // Checkout the repos.
   for (let name in pkgs) {
     const settings = pkgs[name];
-    await checkoutRepository(name, repoDir, settings, options.noFetch);
+    await checkoutRepository(name, repoDir, settings, options.noFetch, options.reset);
     const packageId = settings.package || name;
     let packagePath = path.join('.', DEVELOP_DIRECTORY, name);
     if (settings.path) {
