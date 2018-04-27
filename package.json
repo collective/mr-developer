@@ -1,6 +1,6 @@
 {
   "name": "mr-developer",
-  "version": "0.0.16",
+  "version": "1.0.0",
   "description": "Utility for installing NPM dependencies as git repos.",
   "main": "src/index.js",
   "bin": {
