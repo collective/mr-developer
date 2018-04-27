@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/collective/ng-mr-developer.git"
+    "url": "git+https://github.com/collective/mr-developer.git"
   },
   "author": "Plone Community",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/collective/ng-mr-developer/issues"
+    "url": "https://github.com/collective/mr-developer/issues"
   },
-  "homepage": "https://github.com/collective/ng-mr-developer#readme",
+  "homepage": "https://github.com/collective/mr-developer#readme",
   "dependencies": {
     "colors": "~1.2.1",
     "nodegit": "~0.21.2"

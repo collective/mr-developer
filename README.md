@@ -1,12 +1,12 @@
 # mr-developer
 
-[![Build Status](https://travis-ci.org/collective/ng-mr-developer.svg?branch=master)](https://travis-ci.org/collective/ng-mr-developer)
+[![Build Status](https://travis-ci.org/collective/mr-developer.svg?branch=master)](https://travis-ci.org/collective/mr-developer)
 
 mr-developer is an NodeJS utility that makes it easy to work with NPM projects containing lots of packages, of which you only want to develop some.
 
 It allows to replace any given dependency with a checkout from its Git repository.
 
-![screenshot](https://raw.githubusercontent.com/collective/ng-mr-developer/eric-changes/docs/mr-developer.jpeg "Console screenshot")
+![screenshot](https://raw.githubusercontent.com/collective/mr-developer/eric-changes/docs/mr-developer.jpeg "Console screenshot")
 
 The paths to those local checkouts are added in `tsconfig.json` (or any file able to override `node_modules` packages by providing custom paths).
 
