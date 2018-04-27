@@ -1,0 +1,40 @@
+{
+  "name": "mr-developer",
+  "version": "0.0.16",
+  "description": "Utility for installing NPM dependencies as git repos.",
+  "main": "src/index.js",
+  "bin": {
+    "mrdeveloper": "src/command.js"
+  },
+  "engines": {
+    "node": ">=5.12.0",
+    "npm": ">=0.23.3"
+  },
+  "scripts": {
+    "lint": "./node_modules/eslint/bin/eslint.js src/*.js",
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/collective/mr-developer.git"
+  },
+  "author": "Plone Community",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/collective/mr-developer/issues"
+  },
+  "homepage": "https://github.com/collective/mr-developer#readme",
+  "dependencies": {
+    "colors": "~1.2.1",
+    "nodegit": "~0.21.2"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "mocha": "^4.0.1",
+    "mock-fs": "^4.4.2",
+    "rimraf": "~2.6.2"
+  }
+}
