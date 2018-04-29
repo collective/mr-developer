@@ -4,6 +4,7 @@ const fs = require('fs');
 const git = require('nodegit');
 const path = require('path');
 const colors = require('colors/safe');
+const sortVersions = require('version-sort');
 
 const DEVELOP_DIRECTORY = 'develop';
 
@@ -27,7 +28,7 @@ const cloneRepository = function (name, path, url) {
     console.log(colors.green(`✓ cloned ${name} at ${path}`));
     return repo;
   })
-  .catch(function (err) { console.error(colors.red(`Cannot clone ${url}`, err)); });;
+  .catch(function (err) { console.error(colors.red(`Cannot clone ${url}`, err)); });
 };
 
 const openRepository = function (name, path) {
@@ -107,10 +108,21 @@ const getTag = function (name, repository, tagName) {
       return repository.setHeadDetached(commit, repository.defaultSignature,
         'Checkout: HEAD ' + commit.id());
     })
+  })
+  .then(function () {
+    return tagName;
   });
 };
 
-const setHead = function (name, repository, settings, reset) {
+const getLastTag = function (repo) {
+  return git.Tag.list(repo)
+  .then(function(tags) {
+    const sorted = sortVersions(tags);
+    return sorted.pop();
+  });
+};
+
+const setHead = function (name, repository, settings, reset, lastTag) {
   let promise;
   if (reset) {
     promise = repository.getHeadCommit()
@@ -135,7 +147,12 @@ const setHead = function (name, repository, settings, reset) {
     if (res.abort) {
       return res;
     } else {
-      if (settings.tag) {
+      if (lastTag) {
+        return getLastTag(repository)
+        .then(function(tag) {
+          return getTag(name, repository, tag);
+        });
+      } else if (settings.tag) {
         return getTag(name, repository, settings.tag);
       } else {
         return updateBranch(name, repository, settings.branch || 'master')
@@ -161,7 +178,8 @@ const updateRepository = function (name, repository) {
   .catch(function (err) { console.error(colors.red(`Cannot fetch ${settings.url} origin`, err)); });
 };
 
-const checkoutRepository = function(name, root, settings, noFetch, reset) {
+const checkoutRepository = function(name, root, settings, options) {
+  const { noFetch, reset, lastTag } = options;
   const pathToRepo = path.join(root, name);
   
   const tag = settings.tag;
@@ -175,11 +193,11 @@ const checkoutRepository = function(name, root, settings, noFetch, reset) {
 
   return promise.then(function(repository) {
     if (noFetch) {
-      return setHead(name, repository, settings, reset);
+      return setHead(name, repository, settings, reset, lastTag);
     } else {
       return updateRepository(name, repository)
       .then(function() {
-        return setHead(name, repository, settings, reset);
+        return setHead(name, repository, settings, reset, lastTag);
       });
     }
   })
@@ -208,7 +226,10 @@ const develop = async function develop(options) {
   // Checkout the repos.
   for (let name in pkgs) {
     const settings = pkgs[name];
-    await checkoutRepository(name, repoDir, settings, options.noFetch, options.reset);
+    const res = await checkoutRepository(name, repoDir, settings, options);
+    if (options.lastTag) {
+      pkgs[name].tag = res;
+    }
     const packageId = settings.package || name;
     let packagePath = path.join('.', DEVELOP_DIRECTORY, name);
     if (settings.path) {
@@ -223,6 +244,11 @@ const develop = async function develop(options) {
   tsconfig.compilerOptions.baseUrl = 'src';
   console.log(colors.yellow(`Update paths in tsconfig.json\n`));
   fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
+
+  // update mr.developer.json with last tag if needed
+  if (options.lastTag) {
+    fs.writeFileSync(path.join(options.root || '.', 'mr.developer.json'), JSON.stringify(pkgs, null, 4));
+  }
 };
 
 exports.cloneRepository = cloneRepository;
@@ -231,6 +257,7 @@ exports.createBranch = createBranch;
 exports.getBranch = getBranch;
 exports.updateBranch = updateBranch;
 exports.getTag = getTag;
+exports.getLastTag = getLastTag;
 exports.setHead = setHead;
 exports.updateRepository = updateRepository;
 exports.checkoutRepository = checkoutRepository;

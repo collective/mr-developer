@@ -10,6 +10,6 @@
     "repo3": {
         "path": "lib/core",
         "url": "./test/fake-remote/repo1",
-        "tag": "v1"
+        "tag": "1.0.0"
     }
 }

@@ -17,7 +17,7 @@ describe('getTag', () => {
 	it('gets the tag', async () => {
 		await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
         const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
-        await developer.getTag('repo1', repo, 'v1');
+        await developer.getTag('repo1', repo, '1.0.0');
         const commit = await repo.getHeadCommit();
 		expect(commit.message()).to.be.equal('Add file 1\n');
 		expect(fs.existsSync('./test/src/develop/repo1/file2.txt')).to.be.false;
