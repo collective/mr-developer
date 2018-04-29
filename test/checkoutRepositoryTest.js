@@ -18,7 +18,7 @@ describe('checkoutRepository', () => {
 		await developer.checkoutRepository('repo1', './test/src/develop', {
             url: './test/fake-remote/repo1',
             branch: 'staging'
-        });
+        }, {});
         const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
         const branch = await repo.getCurrentBranch();
 		expect(branch.name()).to.be.equal('refs/heads/staging');
@@ -38,7 +38,7 @@ describe('checkoutRepository', () => {
         await developer.checkoutRepository('repo1', './test/src/develop', {
             url: './test/fake-remote/repo1',
             branch: 'staging'
-        });
+        }, {});
         repo = await developer.openRepository('repo1', './test/src/develop/repo1');
         const commit = await repo.getHeadCommit();
         expect(commit.message()).to.be.equal('Modify file 1 again\n');
@@ -56,7 +56,7 @@ describe('checkoutRepository', () => {
         await developer.checkoutRepository('repo1', './test/src/develop', {
             url: './test/fake-remote/repo1',
             branch: 'staging'
-        }, true);
+        }, {noFetch: true});
         repo = await developer.openRepository('repo1', './test/src/develop/repo1');
         const commit = await repo.getHeadCommit();
         expect(commit.message()).to.be.equal('Modify file 1\n');

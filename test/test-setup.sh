@@ -18,7 +18,7 @@ git checkout master
 echo "File 1" > file1.txt
 git add file1.txt
 git commit --amend --no-edit
-git tag v1
+git tag 1.0.0
 echo "File 2" > file2.txt
 git add file2.txt
 git commit -am "Add file 2"

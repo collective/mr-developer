@@ -38,6 +38,16 @@ describe('develop', () => {
         expect(config.compilerOptions.paths.repo3[0]).to.be.equal('develop/repo3/lib/core');
     });
 
+    it('updates mr.developer.json with last tag', async () => {
+        await exec('cp ./test/mr.developer.json ./test/mr.developer.json.bak');
+        await exec('./test/test-create-tags.sh');
+        await developer.develop({root: './test', lastTag: true});
+        const raw = fs.readFileSync('./test/mr.developer.json');
+        const config = JSON.parse(raw);
+        expect(config.repo1.tag).to.be.equal('1.0.11');
+        await exec('mv ./test/mr.developer.json.bak ./test/mr.developer.json');
+    });
+
 	afterEach(() => {
 		rimraf.sync('./test/src/develop');
 		rimraf.sync('./fake-remote');

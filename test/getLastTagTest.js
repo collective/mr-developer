@@ -4,24 +4,23 @@ const chai = require('chai');
 const rimraf = require('rimraf');
 const developer = require('../src/index.js');
 const expect = chai.expect;
+const git = require('nodegit');
 const util = require('util');
-const fs = require('fs');
 const exec = util.promisify(require('child_process').exec);
 
-describe('getTag', () => {
+describe('updateRepository', () => {
 	beforeEach(async () => {
         await exec('./test/test-setup.sh');
 		await Promise.resolve(developer.getRepoDir('./test'));
 	});
-
-	it('gets the tag', async () => {
+	
+	it('gets last tag', async () => {
+		await exec('./test/test-create-tags.sh');
 		await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
-        const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
-        await developer.getTag('repo1', repo, '1.0.0');
-        const commit = await repo.getHeadCommit();
-		expect(commit.message()).to.be.equal('Add file 1\n');
-		expect(fs.existsSync('./test/src/develop/repo1/file2.txt')).to.be.false;
-    });
+		const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
+        const last = await developer.getLastTag(repo);
+		expect(last).to.be.equal('1.0.11');
+	});
 
 	afterEach(() => {
 		rimraf.sync('./test/src/develop');

@@ -25,7 +25,7 @@ describe('setHead', () => {
     it('can set head to a tag', async () => {
 		await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
         const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
-        await developer.setHead('repo1', repo, {'tag': 'v1'});
+        await developer.setHead('repo1', repo, {'tag': '1.0.0'});
         const commit = await repo.getHeadCommit();
 		expect(commit.message()).to.be.equal('Add file 1\n');
     });
@@ -33,7 +33,7 @@ describe('setHead', () => {
     it('ignores branch if tag is metionned', async () => {
 		await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
         const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
-        await developer.setHead('repo1', repo, {'branch': 'staging', 'tag': 'v1'});
+        await developer.setHead('repo1', repo, {'branch': 'staging', 'tag': '1.0.0'});
         const commit = await repo.getHeadCommit();
 		expect(commit.message()).to.be.equal('Add file 1\n');
     });
@@ -65,6 +65,18 @@ describe('setHead', () => {
 		await developer.setHead('repo1', repo, {'branch': 'staging'}, true);
 		const txt = fs.readFileSync('./test/src/develop/repo1/file1.txt').toString();
 		expect(txt).to.be.equal('File 1\nMore text\n');
+    });
+    
+    it('can get last tag', async () => {
+        await exec('./test/test-create-tags.sh');
+        await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
+        const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
+        const tag = await developer.setHead('repo1', repo, {'tag': '1.0.0'}, false, true);
+		expect(tag).to.be.equal('1.0.11');
+        const commit = await repo.getHeadCommit();
+        expect(commit.message()).to.be.equal('really?\n');
+        const txt = fs.readFileSync('./test/src/develop/repo1/file1.txt').toString();
+		expect(txt).to.be.equal('File 1\nKnowledge is power\nFrance is bacon\n');
 	});
 
 	afterEach(() => {
