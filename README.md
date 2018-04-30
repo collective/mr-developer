@@ -54,6 +54,11 @@ $ mrdevelop --hard
 will do a hard reset before updating, so local changes are overriden.
 
 ```
+$ mrdevelop --last-tag
+```
+will get the last tag (according version sorting) for each epository and will update `mr.developer.json` accordingly.
+
+```
 $ mrdevelop --config=jsconfig.json
 ```
 allows to update a different file than `tsconfig.json` (might be useful in non-Angular context).
