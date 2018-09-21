@@ -181,7 +181,7 @@ const updateRepository = function (name, repository) {
 const checkoutRepository = function(name, root, settings, options) {
   const { noFetch, reset, lastTag } = options;
   const pathToRepo = path.join(root, name);
-  
+
   const tag = settings.tag;
   var promise;
 
@@ -204,9 +204,9 @@ const checkoutRepository = function(name, root, settings, options) {
   .catch(function (err) { console.error(colors.red(err)); });
 };
 
-const getRepoDir = function (root) {
+const getRepoDir = function (root, output) {
   // Check for download directory; create if needed.
-  const repoDir = path.join(root || '.', 'src', DEVELOP_DIRECTORY);
+  const repoDir = path.join(root || '.', 'src', output || DEVELOP_DIRECTORY);
   if (!fs.existsSync(repoDir)){
     console.log(`\nCreating repoDir ${repoDir}`);
     fs.mkdirSync(repoDir);
@@ -221,7 +221,7 @@ const develop = async function develop(options) {
   // Read in mr.developer.json.
   const raw = fs.readFileSync(path.join(options.root || '.', 'mr.developer.json'));
   const pkgs = JSON.parse(raw);
-  const repoDir = getRepoDir(options.root);
+  const repoDir = getRepoDir(options.root, options.output);
   const paths = {};
   // Checkout the repos.
   for (let name in pkgs) {
@@ -237,14 +237,17 @@ const develop = async function develop(options) {
     }
     paths[packageId] = [packagePath.replace(/\\/g, '/')]; // we do not want Windows separators here
   }
-  // update paths in configFile
-  const configFile = options.configFile || 'tsconfig.json';
-  const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', configFile)));
-  tsconfig.compilerOptions.paths = paths;
-  tsconfig.compilerOptions.baseUrl = 'src';
-  console.log(colors.yellow(`Update paths in tsconfig.json\n`));
-  fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
-  
+
+  if (!options.noConfig) {
+    // update paths in configFile
+    const configFile = options.configFile || 'tsconfig.json';
+    const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', configFile)));
+    tsconfig.compilerOptions.paths = paths;
+    tsconfig.compilerOptions.baseUrl = 'src';
+    console.log(colors.yellow(`Update paths in tsconfig.json\n`));
+    fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
+  }
+
   // update mr.developer.json with last tag if needed
   if (options.lastTag) {
     fs.writeFileSync(path.join(options.root || '.', 'mr.developer.json'), JSON.stringify(pkgs, null, 4));
