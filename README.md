@@ -69,7 +69,7 @@ $ mrdevelop --no-config
 will not write any config
 
 ```
-$ mrdevelop --outout=myfolder
+$ mrdevelop --output=myfolder
 ```
 will checkout the files in src/myfolder
 
