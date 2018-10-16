@@ -11,10 +11,14 @@ const DEVELOP_DIRECTORY = 'develop';
 const cloneRepository = function (name, path, url) {
   console.log(`Cloning ${name} from ${url}...`);
   const cloneOptions = {};
+  let counter = 0;
   cloneOptions.fetchOpts = {
     callbacks: {
       certificateCheck: function() { return 1; },
       credentials: function(repoUrl, userName) {
+        if (counter++ > 10) {
+            throw 'Infinite loop';
+        }
         return git.Cred.sshKeyFromAgent(userName);
       },
       transferProgress: function(stats) {
@@ -28,7 +32,13 @@ const cloneRepository = function (name, path, url) {
     console.log(colors.green(`✓ cloned ${name} at ${path}`));
     return repo;
   })
-  .catch(function (err) { console.error(colors.red(`Cannot clone ${url}`, err)); });
+  .catch(function (err) { 
+    if (counter > 10) {
+      console.error(colors.red('Authentication agent not loaded', err));
+    } else {
+      console.error(colors.red(`Cannot clone ${url}`, err));
+    }
+  });
 };
 
 const openRepository = function (name, path) {
@@ -163,10 +173,14 @@ const setHead = function (name, repository, settings, reset, lastTag) {
 
 const updateRepository = function (name, repository) {
   console.log(`Updating ${name}`);
+  let counter = 0;
   const fetchOpts = {
     callbacks: {
       certificateCheck: function() { return 1; },
       credentials: function(repoUrl, userName) {
+        if (counter++ > 10) {
+          throw 'Infinite loop';
+        }
         return git.Cred.sshKeyFromAgent(userName);
       }
     }
@@ -175,7 +189,13 @@ const updateRepository = function (name, repository) {
   .then(function() {
     return repository;
   })
-  .catch(function (err) { console.error(colors.red(`Cannot fetch ${settings.url} origin`, err)); });
+  .catch(function (err) { 
+    if (counter > 10) {
+      console.error(colors.red('Authentication agent not loaded', err));
+    } else {
+      console.error(colors.red(`Cannot clone ${url}`, err));
+    }
+  });
 };
 
 const checkoutRepository = function(name, root, settings, options) {
