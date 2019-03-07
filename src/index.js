@@ -32,7 +32,7 @@ const cloneRepository = function (name, path, url) {
     console.log(colors.green(`✓ cloned ${name} at ${path}`));
     return repo;
   })
-  .catch(function (err) { 
+  .catch(function (err) {
     if (counter > 10) {
       console.error(colors.red('Authentication agent not loaded', err));
     } else {
@@ -189,7 +189,7 @@ const updateRepository = function (name, repository) {
   .then(function() {
     return repository;
   })
-  .catch(function (err) { 
+  .catch(function (err) {
     if (counter > 10) {
       console.error(colors.red('Authentication agent not loaded', err));
     } else {
@@ -251,7 +251,7 @@ const develop = async function develop(options) {
       pkgs[name].tag = res;
     }
     const packageId = settings.package || name;
-    let packagePath = path.join('.', DEVELOP_DIRECTORY, name);
+    let packagePath = path.join('.', options.output || DEVELOP_DIRECTORY, name);
     if (settings.path) {
       packagePath = path.join(packagePath, settings.path);
     }
